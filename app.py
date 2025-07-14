@@ -12,12 +12,12 @@ def index():
 
 @app.route("/responder", methods=["POST"])
 def responder():
-    # Suporta texto puro ou JSON
-    dados = request.json
-    if dados and "message" in dados:
-        mensagem_usuario = dados["message"]
-    else:
-        mensagem_usuario = request.data.decode("utf-8") or ""
+    # Captura tanto JSON quanto texto puro
+    try:
+        dados = request.json
+        mensagem_usuario = dados["message"] if dados and "message" in dados else request.data.decode("utf-8")
+    except:
+        mensagem_usuario = request.data.decode("utf-8")
 
     prompt = f"""
 Você é um assistente virtual da Prefeitura de Santa Bárbara do Sul, responsável exclusivamente por registrar chamados de TI.

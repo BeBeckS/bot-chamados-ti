@@ -6,14 +6,18 @@ app = Flask(__name__)
 API_KEY = "AIzaSyBe6szrB-hv8ZrnS25f758W_twZPNU8J9U"
 API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
 
-@app.route("/responder", methods=["POST"])
-def responder():
-    dados = request.json
-    mensagem_usuario = dados.get("message") or dados.get("mensagem") or ""
-    
 @app.route("/", methods=["GET"])
 def index():
     return "Bot de chamados da Prefeitura ativo!"
+
+@app.route("/responder", methods=["GET"])
+def responder_get():
+    return "Use método POST para enviar mensagens", 200
+
+@app.route("/responder", methods=["POST"])
+def responder_post():
+    dados = request.json
+    mensagem_usuario = dados.get("message") or dados.get("mensagem") or ""
     
     prompt = f"""
 Você é um assistente virtual da Prefeitura de Santa Bárbara do Sul, responsável exclusivamente por registrar chamados de TI.

@@ -18,7 +18,7 @@ def responder_get():
 def responder_post():
     dados = request.json
     mensagem_usuario = dados.get("message") or dados.get("mensagem") or ""
-    
+
     prompt = f"""
 Você é um assistente virtual da Prefeitura de Santa Bárbara do Sul, responsável exclusivamente por registrar chamados de TI.
 
@@ -72,7 +72,6 @@ Resposta:
         dados_resposta = resposta.json()
         resposta_texto = dados_resposta["candidates"][0]["content"]["parts"][0]["text"]
 
-        # Retorna com o campo "message" para compatibilidade com o app
         return jsonify({"message": resposta_texto})
 
     except Exception as e:

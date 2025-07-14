@@ -3,6 +3,7 @@ import requests
 
 app = Flask(__name__)
 
+# Chave da API Gemini
 API_KEY = "AIzaSyBe6szrB-hv8ZrnS25f758W_twZPNU8J9U"
 API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
 
@@ -12,13 +13,14 @@ def index():
 
 @app.route("/responder", methods=["POST"])
 def responder():
-    # Captura tanto JSON quanto texto puro
     try:
-        dados = request.json
-        mensagem_usuario = dados["message"] if dados and "message" in dados else request.data.decode("utf-8")
+        # Aceita JSON ou texto puro
+        dados = request.get_json(force=True)
+        mensagem_usuario = dados.get("message", "")
     except:
-        mensagem_usuario = request.data.decode("utf-8")
+        mensagem_usuario = request.data.decode("utf-8") or ""
 
+    # Prompt orientado para o assistente de chamados
     prompt = f"""
 Você é um assistente virtual da Prefeitura de Santa Bárbara do Sul, responsável exclusivamente por registrar chamados de TI.
 
@@ -71,6 +73,7 @@ Resposta:
     except Exception as e:
         resposta_texto = f"Erro ao gerar resposta: {str(e)}"
 
+    # Retorna texto puro (não JSON)
     return resposta_texto, 200, {"Content-Type": "text/plain"}
 
 if __name__ == "__main__":

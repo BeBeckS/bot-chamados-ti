@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request
 import requests
 
 app = Flask(__name__)
@@ -10,14 +10,14 @@ API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-fl
 def index():
     return "Bot de chamados da Prefeitura ativo!"
 
-@app.route("/responder", methods=["GET"])
-def responder_get():
-    return "Use método POST para enviar mensagens", 200
-
 @app.route("/responder", methods=["POST"])
 def responder_post():
+    # Tenta pegar JSON, se não existir pega texto cru
     dados = request.json
-    mensagem_usuario = dados.get("message") or dados.get("mensagem") or ""
+    if dados and "message" in dados:
+        mensagem_usuario = dados["message"]
+    else:
+        mensagem_usuario = request.data.decode("utf-8") or ""
 
     prompt = f"""
 Você é um assistente virtual da Prefeitura de Santa Bárbara do Sul, responsável exclusivamente por registrar chamados de TI.
@@ -72,10 +72,11 @@ Resposta:
         dados_resposta = resposta.json()
         resposta_texto = dados_resposta["candidates"][0]["content"]["parts"][0]["text"]
 
-        return jsonify({"message": resposta_texto})
-
     except Exception as e:
-        return jsonify({"message": f"Erro ao gerar resposta: {str(e)}"}), 500
+        resposta_texto = f"Erro ao gerar resposta: {str(e)}"
+
+    # Retorna texto puro para o AutoReply entender
+    return resposta_texto, 200, {"Content-Type": "text/plain"}
 
 
 if __name__ == "__main__":

@@ -10,7 +10,11 @@ API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-fl
 def responder():
     dados = request.json
     mensagem_usuario = dados.get("message") or dados.get("mensagem") or ""
-
+    
+@app.route("/", methods=["GET"])
+def index():
+    return "Bot de chamados da Prefeitura ativo!"
+    
     prompt = f"""
 Você é um assistente virtual da Prefeitura de Santa Bárbara do Sul, responsável exclusivamente por registrar chamados de TI.
 

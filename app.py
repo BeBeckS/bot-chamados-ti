@@ -9,8 +9,7 @@ API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-fl
 @app.route("/responder", methods=["POST"])
 def responder():
     dados = request.json
-    mensagem_usuario = dados.get("message") or dados.get("mensagem", "")
-
+    mensagem_usuario = dados.get("message") or dados.get("mensagem") or ""
 
     prompt = f"""
 Você é um assistente virtual da Prefeitura de Santa Bárbara do Sul, responsável exclusivamente por registrar chamados de TI.
@@ -65,10 +64,11 @@ Resposta:
         dados_resposta = resposta.json()
         resposta_texto = dados_resposta["candidates"][0]["content"]["parts"][0]["text"]
 
+        # Retorna com o campo "message" para compatibilidade com o app
         return jsonify({"message": resposta_texto})
 
     except Exception as e:
-        return jsonify({"resposta": f"Erro ao gerar resposta: {str(e)}"}), 500
+        return jsonify({"message": f"Erro ao gerar resposta: {str(e)}"}), 500
 
 
 if __name__ == "__main__":
